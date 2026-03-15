@@ -313,6 +313,28 @@ body {
     margin-bottom: 0;
     align-items: stretch;
 }
+
+/* Compact form layout for the Quantum Jobs submit panel */
+#section-quantum .panel > .form-group,
+#section-quantum .panel > .form-row {
+    margin-bottom: 0.45rem;
+}
+#section-quantum .panel > .form-group label,
+#section-quantum .form-row .form-group label {
+    margin-bottom: 0.2rem;
+    font-size: 0.78rem;
+}
+#section-quantum .panel > .form-group:last-of-type {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+#section-quantum .code-editor {
+    flex: 1;
+    min-height: 80px;
+    resize: none;
+}
 #section-dashboard > .card-row--2col {
     flex: 1 1 0;
     min-height: 80px;
@@ -621,7 +643,7 @@ body {
 }
 .input {
     width: 100%;
-    padding: 0.65rem 0.9rem;
+    padding: 0.5rem 0.75rem;
     border: 1px solid var(--border);
     border-radius: 10px;
     background: var(--input-bg);
@@ -644,12 +666,12 @@ select.input { cursor: pointer; }
 }
 
 /* ---- Chips ------------------------------------------------------------ */
-.chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .chip {
     display: inline-flex; align-items: center;
-    padding: 0.3rem 0.8rem;
+    padding: 0.25rem 0.65rem;
     border-radius: 8px;
-    font-size: 0.78rem; font-weight: 500;
+    font-size: 0.75rem; font-weight: 500;
     cursor: pointer;
     border: 1px solid var(--border);
     background: var(--surface);
@@ -865,20 +887,41 @@ select.input { cursor: pointer; }
 .scanner-form {
     flex-shrink: 0;
 }
+.scanner-form .form-group {
+    margin-bottom: 0.35rem;
+}
+.scanner-form .form-group label {
+    font-size: 0.7rem;
+    margin-bottom: 0.15rem;
+}
+.scanner-form .input {
+    font-size: 0.72rem;
+    padding: 0.35rem 0.6rem;
+    line-height: 1.4;
+}
 .scanner-presets {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
-    margin-top: 0.35rem;
+    gap: 0.25rem;
+    margin-top: 0.25rem;
 }
 .scanner-presets .chip {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.55rem;
+    font-size: 0.62rem;
+    padding: 0.15rem 0.45rem;
+}
+.scanner-form .btn--sm {
+    padding: 0.28rem 0.6rem;
+    font-size: 0.68rem;
+    margin-top: 0.35rem;
+}
+.scanner-form .btn--sm i {
+    width: 13px;
+    height: 13px;
 }
 
 /* Scan results */
 .scan-results {
-    margin-top: 0.75rem;
+    margin-top: 0.5rem;
     flex: 1;
     min-height: 0;
     overflow-y: auto;
@@ -886,22 +929,22 @@ select.input { cursor: pointer; }
 .scan-score-ring {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.6rem;
-    padding: 0.5rem;
-    border-radius: 10px;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+    padding: 0.35rem;
+    border-radius: 8px;
     background: var(--surface);
     border: 1px solid var(--border);
 }
 .score-circle {
-    width: 56px;
-    height: 56px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 3px solid var(--accent);
+    border: 2px solid var(--accent);
     flex-shrink: 0;
     transition: border-color 0.3s ease;
 }
@@ -912,45 +955,51 @@ select.input { cursor: pointer; }
 .score-circle.grade-f { border-color: var(--error); }
 
 .score-value {
-    font-size: 1.1rem;
+    font-size: 0.7rem;
     font-weight: 800;
     line-height: 1;
 }
 .score-grade {
-    font-size: 0.6rem;
+    font-size: 0.35rem;
     font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 .score-label {
-    font-size: 0.82rem;
+    font-size: 0.6rem;
     font-weight: 600;
     color: var(--text-secondary);
-    line-height: 1.3;
+    line-height: 1.2;
 }
 
 /* Scan findings list */
 .scan-findings {
     display: flex;
     flex-direction: column;
-    gap: 0.3rem;
+    gap: 0.2rem;
 }
 .scan-finding {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.35rem 0.6rem;
-    border-radius: 8px;
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
     background: var(--surface);
     border: 1px solid var(--border);
-    font-size: 0.78rem;
+    font-size: 0.58rem;
 }
 .scan-finding__name {
     font-weight: 600;
+    font-size: 0.58rem;
+}
+.scan-finding .threat-badge {
+    font-size: 0.5rem;
+    padding: 0.05rem 0.3rem;
 }
 .scan-finding__rec {
-    font-size: 0.7rem;
+    font-size: 0.52rem;
     color: var(--text-muted);
     max-width: 50%;
     text-align: right;
@@ -1445,10 +1494,10 @@ select.input { cursor: pointer; }
     position: relative;
     z-index: 100;
     text-align: center;
-    padding: 0.5rem 1rem;
-    font-size: 0.72rem;
+    padding: 0.35rem 1rem;
+    font-size: 0.58rem;
     font-weight: 600;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
     color: var(--text-muted);
     background: var(--glass-bg);
