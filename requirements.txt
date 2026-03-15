@@ -1,0 +1,42 @@
+# ============================================================================
+# QDK Chemistry - Quantum Dashboard Dependencies
+# ============================================================================
+
+# --- Core Web Framework ---
+flask>=3.0.0
+flask-cors>=4.0.0
+python-dotenv>=1.0.0
+gunicorn>=21.2.0
+
+# --- Azure Quantum ---
+azure-quantum>=2.0.0
+azure-identity>=1.15.0
+qiskit>=1.0.0
+qiskit-aer>=0.13.0
+
+# --- QDK Chemistry ---
+# qdk-chemistry==1.0.6
+
+# --- Data & Visualization (backend) ---
+numpy>=1.24.0
+pandas>=2.0.0
+
+# --- Future: Azure OpenAI ---
+# openai>=1.12.0
+# azure-ai-openai>=1.0.0
+
+# --- Future: Azure AI Search ---
+# azure-search-documents>=11.4.0
+
+# --- Future: Azure Speech ---
+# azure-cognitiveservices-speech>=1.35.0
+
+# --- Future: Azure Document Intelligence ---
+# azure-ai-formrecognizer>=3.3.0
+
+# --- Future: Azure Blob Storage (for results) ---
+# azure-storage-blob>=12.19.0
+
+# --- Development ---
+# pytest>=8.0.0
+# ruff>=0.3.0

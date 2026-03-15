@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QDK Chemistry — Quantum Dashboard</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Lucide Icons (lightweight SVG icon set) -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <!-- App stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}" />
+</head>
+<body>
+    <!-- ============================================================
+         ANIMATED BACKGROUND
+    ============================================================= -->
+    <div class="bg-wrapper">
+        <div class="bg-orb bg-orb--1"></div>
+        <div class="bg-orb bg-orb--2"></div>
+        <div class="bg-orb bg-orb--3"></div>
+        <div class="bg-orb bg-orb--4"></div>
+    </div>
+
+    <!-- ============================================================
+         TOP NAVIGATION BAR
+    ============================================================= -->
+    <nav class="topbar glass">
+        <div class="topbar__brand">
+            <div class="topbar__logo">
+                <i data-lucide="atom" class="icon-brand"></i>
+            </div>
+            <div>
+                <h1 class="topbar__title">QDK Chemistry</h1>
+                <span class="topbar__subtitle">Quantum Dashboard</span>
+            </div>
+        </div>
+
+        <div class="topbar__nav">
+            <button class="nav-btn active" data-section="dashboard">
+                <i data-lucide="layout-dashboard"></i>
+                <span>Dashboard</span>
+            </button>
+            <button class="nav-btn" data-section="quantum">
+                <i data-lucide="zap"></i>
+                <span>Quantum Jobs</span>
+            </button>
+            <button class="nav-btn" data-section="security">
+                <i data-lucide="shield-check"></i>
+                <span>Quantum Security</span>
+            </button>
+            <button class="nav-btn" data-section="chemistry">
+                <i data-lucide="flask-conical"></i>
+                <span>Chemistry Lab</span>
+            </button>
+            <button class="nav-btn" data-section="ai" disabled title="Coming soon">
+                <i data-lucide="brain"></i>
+                <span>AI Assistant</span>
+            </button>
+        </div>
+
+        <div class="topbar__actions">
+            <button class="icon-btn" id="themeToggle" title="Toggle dark mode">
+                <i data-lucide="sun" id="themeIconLight"></i>
+                <i data-lucide="moon" id="themeIconDark" style="display:none"></i>
+            </button>
+            <div class="status-badge glass" id="connectionBadge">
+                <span class="status-dot"></span>
+                <span id="connectionText">Connecting…</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================================
+         MAIN CONTENT
+    ============================================================= -->
+    <main class="main-content">
+
+        <!-- ======== DASHBOARD SECTION ======== -->
+        <section class="section" id="section-dashboard">
+
+            <!-- Hero banner -->
+            <div class="hero glass">
+                <div class="hero__text">
+                    <h2>Welcome to the <span class="gradient-text">Quantum Dashboard</span></h2>
+                    <p>Submit quantum circuits to Azure Quantum, visualize results, and explore
+                       quantum chemistry — all from a single interface.</p>
+                    <button class="btn btn--primary" onclick="QDKApp.navigateTo('quantum')">
+                        <i data-lucide="zap"></i> Submit a Quantum Job
+                    </button>
+                </div>
+                <div class="hero__visual">
+                    <canvas id="heroParticles" width="280" height="160"></canvas>
+                </div>
+            </div>
+
+            <!-- Stat cards row -->
+            <div class="card-row">
+                <div class="stat-card glass">
+                    <div class="stat-card__icon"><i data-lucide="cpu"></i></div>
+                    <div class="stat-card__body">
+                        <span class="stat-card__value" id="statTargets">—</span>
+                        <span class="stat-card__label">Quantum Targets</span>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-card__icon"><i data-lucide="send"></i></div>
+                    <div class="stat-card__body">
+                        <span class="stat-card__value" id="statJobs">0</span>
+                        <span class="stat-card__label">Jobs Submitted</span>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-card__icon"><i data-lucide="activity"></i></div>
+                    <div class="stat-card__body">
+                        <span class="stat-card__value" id="statShots">0</span>
+                        <span class="stat-card__label">Total Shots</span>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-card__icon"><i data-lucide="check-circle"></i></div>
+                    <div class="stat-card__body">
+                        <span class="stat-card__value" id="statCompleted">0</span>
+                        <span class="stat-card__label">Completed</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Services grid -->
+            <h3 class="section-heading">Azure Services</h3>
+            <div class="card-row card-row--5col" id="servicesGrid">
+                <!-- populated by JS -->
+            </div>
+
+            <!-- Recent jobs & chart -->
+            <div class="card-row card-row--2col">
+                <div class="panel glass">
+                    <h3 class="panel__title"><i data-lucide="history"></i> Recent Jobs</h3>
+                    <div id="recentJobsList" class="job-list">
+                        <p class="muted">No jobs yet. Submit your first quantum circuit!</p>
+                    </div>
+                </div>
+                <div class="panel glass">
+                    <h3 class="panel__title"><i data-lucide="bar-chart-3"></i> Results Overview</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="dashboardChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Executive Insights Row -->
+            <div class="card-row card-row--3col dash-insights">
+
+                <!-- PQC Readiness Snapshot -->
+                <div class="panel glass insight-panel">
+                    <h3 class="panel__title"><i data-lucide="shield-check"></i> PQC Readiness</h3>
+                    <div class="insight-body" id="insightPqc">
+                        <div class="insight-grade" id="insightGrade">—</div>
+                        <div class="insight-stats">
+                            <div class="insight-stat">
+                                <span class="insight-stat__val insight-stat--critical" id="insightCritical">0</span>
+                                <span class="insight-stat__lbl">Critical</span>
+                            </div>
+                            <div class="insight-stat">
+                                <span class="insight-stat__val insight-stat--warning" id="insightWarning">0</span>
+                                <span class="insight-stat__lbl">Warning</span>
+                            </div>
+                            <div class="insight-stat">
+                                <span class="insight-stat__val insight-stat--safe" id="insightSafe">0</span>
+                                <span class="insight-stat__lbl">Safe</span>
+                            </div>
+                            <div class="insight-stat">
+                                <span class="insight-stat__val insight-stat--pqc" id="insightPqcSafe">0</span>
+                                <span class="insight-stat__lbl">PQC-Ready</span>
+                            </div>
+                        </div>
+                        <div class="insight-bar-wrap">
+                            <div class="insight-bar" id="insightBar"></div>
+                        </div>
+                        <p class="insight-caption" id="insightCaption">Loading security posture…</p>
+                    </div>
+                </div>
+
+                <!-- Quantum Milestones -->
+                <div class="panel glass insight-panel">
+                    <h3 class="panel__title"><i data-lucide="milestone"></i> Quantum Milestones</h3>
+                    <div class="insight-timeline" id="insightTimeline">
+                        <div class="tl-item tl-past">
+                            <span class="tl-year">2019</span>
+                            <span class="tl-dot"></span>
+                            <span class="tl-text">Google Sycamore — 53 qubits</span>
+                        </div>
+                        <div class="tl-item tl-past">
+                            <span class="tl-year">2023</span>
+                            <span class="tl-dot"></span>
+                            <span class="tl-text">IBM Condor — 1,121 qubits</span>
+                        </div>
+                        <div class="tl-item tl-now">
+                            <span class="tl-year">2025</span>
+                            <span class="tl-dot"></span>
+                            <span class="tl-text">Microsoft Majorana 1 — Topological</span>
+                        </div>
+                        <div class="tl-item tl-future">
+                            <span class="tl-year">2028</span>
+                            <span class="tl-dot"></span>
+                            <span class="tl-text">~100 Logical Qubits projected</span>
+                        </div>
+                        <div class="tl-item tl-future tl-danger">
+                            <span class="tl-year">2033</span>
+                            <span class="tl-dot"></span>
+                            <span class="tl-text">CRQC — RSA/ECC broken</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chemistry Capabilities -->
+                <div class="panel glass insight-panel">
+                    <h3 class="panel__title"><i data-lucide="flask-conical"></i> Chemistry Capabilities</h3>
+                    <div class="insight-chem" id="insightChem">
+                        <div class="chem-metric-grid">
+                            <div class="chem-metric">
+                                <span class="chem-metric__val" id="chemMolCount">—</span>
+                                <span class="chem-metric__lbl">Molecules</span>
+                            </div>
+                            <div class="chem-metric">
+                                <span class="chem-metric__val" id="chemMaxElectrons">—</span>
+                                <span class="chem-metric__lbl">Max Electrons</span>
+                            </div>
+                            <div class="chem-metric">
+                                <span class="chem-metric__val" id="chemMaxOrbitals">—</span>
+                                <span class="chem-metric__lbl">Max Orbitals</span>
+                            </div>
+                            <div class="chem-metric">
+                                <span class="chem-metric__val">5</span>
+                                <span class="chem-metric__lbl">Pipeline Steps</span>
+                            </div>
+                        </div>
+                        <div class="chem-features">
+                            <span class="chem-tag">SCF / Hartree-Fock</span>
+                            <span class="chem-tag">Active Space (AVAS)</span>
+                            <span class="chem-tag">State Prep / Ansatz</span>
+                            <span class="chem-tag">QPE Simulation</span>
+                            <span class="chem-tag">CASCI Spectrum</span>
+                            <span class="chem-tag">3D Viewer</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ======== QUANTUM JOBS SECTION ======== -->
+        <section class="section hidden" id="section-quantum">
+            <h2 class="section-heading">Submit Quantum Job</h2>
+
+            <div class="card-row card-row--2col">
+                <!-- Job submission form -->
+                <div class="panel glass">
+                    <h3 class="panel__title"><i data-lucide="file-code-2"></i> Circuit &amp; Configuration</h3>
+
+                    <div class="form-group">
+                        <label>Job Name</label>
+                        <input type="text" id="jobName" class="input glass"
+                               placeholder="my-quantum-experiment" />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Target Backend</label>
+                            <select id="targetSelect" class="input glass">
+                                <!-- populated by JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Shots</label>
+                            <input type="number" id="shotsInput" class="input glass"
+                                   value="100" min="1" max="10000" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quick Templates</label>
+                        <div class="chip-row" id="templateChips">
+                            <!-- populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>OpenQASM 3.0 Circuit</label>
+                        <textarea id="circuitEditor" class="input glass code-editor" rows="14"
+                                  placeholder="Paste or select a template…" spellcheck="false"></textarea>
+                    </div>
+
+                    <button class="btn btn--primary btn--lg" id="submitJobBtn">
+                        <i data-lucide="rocket"></i> Submit Job
+                    </button>
+                </div>
+
+                <!-- Results panel -->
+                <div class="panel glass">
+                    <h3 class="panel__title"><i data-lucide="bar-chart-3"></i> Job Results</h3>
+
+                    <div id="resultPlaceholder" class="result-placeholder">
+                        <i data-lucide="inbox" class="icon-xl"></i>
+                        <p>Submit a circuit to see results here</p>
+                    </div>
+
+                    <div id="resultContainer" class="hidden">
+                        <div class="result-meta" id="resultMeta"></div>
+                        <canvas id="resultChart"></canvas>
+                        <div class="result-table-wrap">
+                            <table class="result-table" id="resultTable">
+                                <thead>
+                                    <tr><th>State</th><th>Count</th><th>Probability</th></tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job history -->
+            <div class="panel glass" style="margin-top: 0.75rem; flex-shrink: 0; max-height: 150px; overflow-y: auto;">
+                <h3 class="panel__title"><i data-lucide="list"></i> Job History</h3>
+                <div class="table-wrap">
+                    <table class="data-table" id="jobHistoryTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th><th>Name</th><th>Target</th>
+                                <th>Shots</th><th>Status</th><th>Submitted</th><th></th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======== QUANTUM SECURITY SECTION ======== -->
+        <section class="section hidden" id="section-security">
+
+            <!-- Stat cards -->
+            <div class="card-row">
+                <div class="stat-card glass">
+                    <div class="stat-card__icon stat-card__icon--danger"><i data-lucide="alert-triangle"></i></div>
+                    <div class="stat-card__body">
+                        <span class="stat-card__value" id="secCritical">—</span>
+                        <span class="stat-card__label">Critical Threats</span>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-card__icon stat-card__icon--warn"><i data-lucide="shield-alert"></i></div>
+                    <div class="stat-card__body">
+                        <span class="stat-card__value" id="secWarning">—</span>
+                        <span class="stat-card__label">Warnings</span>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-card__icon stat-card__icon--safe"><i data-lucide="shield-check"></i></div>
+                    <div class="stat-card__body">
+                        <span class="stat-card__value" id="secSafe">—</span>
+                        <span class="stat-card__label">Quantum-Safe</span>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-card__icon"><i data-lucide="award"></i></div>
+                    <div class="stat-card__body">
+                        <span class="stat-card__value" id="secPqcCount">—</span>
+                        <span class="stat-card__label">PQC Standards</span>
+                    </div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-card__icon stat-card__icon--symcrypt"><i data-lucide="lock"></i></div>
+                    <div class="stat-card__body">
+                        <span class="stat-card__value" id="secSymCryptCount">—</span>
+                        <span class="stat-card__label">SymCrypt Algos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3-column main content -->
+            <div class="card-row card-row--3col">
+
+                <!-- Column 1: Threat Matrix -->
+                <div class="panel glass">
+                    <h3 class="panel__title"><i data-lucide="alert-triangle"></i> Quantum Threat Matrix</h3>
+                    <div class="threat-matrix-wrap">
+                        <table class="data-table threat-table" id="threatMatrix">
+                            <thead>
+                                <tr>
+                                    <th>Algorithm</th>
+                                    <th>Type</th>
+                                    <th>Use Case</th>
+                                    <th>Threat</th>
+                                    <th>Q-Sec</th>
+                                    <th>Vulnerable To</th>
+                                    <th>Timeline</th>
+                                    <th>Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Column 2: PQC Algorithm Benchmarks -->
+                <div class="panel glass">
+                    <h3 class="panel__title"><i data-lucide="bar-chart-horizontal"></i> PQC Benchmarks</h3>
+                    <div class="pqc-controls">
+                        <select id="pqcTypeFilter" class="input glass input--sm">
+                            <option value="all">All Types</option>
+                            <option value="Key Encapsulation">Key Encapsulation</option>
+                            <option value="Digital Signature">Digital Signature</option>
+                        </select>
+                        <button class="btn btn--outline btn--sm" id="runBenchmarkBtn">
+                            <i data-lucide="play"></i> Run Benchmark
+                        </button>
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="pqcBenchmarkChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Column 3: Readiness Scanner -->
+                <div class="panel glass">
+                    <h3 class="panel__title"><i data-lucide="scan-line"></i> Readiness Scanner</h3>
+                    <div class="scanner-form">
+                        <div class="form-group">
+                            <label>Algorithms to Scan</label>
+                            <textarea id="scanInput" class="input glass" rows="4"
+                                      placeholder="Enter algorithms, one per line:
+RSA-2048
+AES-256
+SymCrypt ML-KEM
+ECDSA" spellcheck="false"></textarea>
+                        </div>
+                        <div class="scanner-presets">
+                            <button class="chip" data-preset="enterprise" title="Typical enterprise stack">Enterprise Stack</button>
+                            <button class="chip" data-preset="modern" title="Modern best practices">Modern Stack</button>
+                            <button class="chip" data-preset="legacy" title="Legacy systems">Legacy Stack</button>
+                            <button class="chip" data-preset="symcrypt" title="Microsoft SymCrypt stack">SymCrypt Stack</button>
+                        </div>
+                        <button class="btn btn--primary btn--sm" id="runScanBtn" style="margin-top:0.5rem;width:100%">
+                            <i data-lucide="scan-line"></i> Scan Readiness
+                        </button>
+                    </div>
+                    <div id="scanResults" class="scan-results hidden">
+                        <div class="scan-score-ring">
+                            <div class="score-circle" id="scoreCircle">
+                                <span class="score-value" id="scoreValue">—</span>
+                                <span class="score-grade" id="scoreGrade"></span>
+                            </div>
+                            <span class="score-label" id="scoreVerdict">Scan to see results</span>
+                        </div>
+                        <div class="scan-findings" id="scanFindings"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Row 2: Security Posture Radar + Quantum Timeline -->
+            <div class="card-row card-row--2col" style="margin-top:0.5rem">
+                <div class="panel glass">
+                    <h3 class="panel__title"><i data-lucide="radar"></i> Security Posture Radar</h3>
+                    <div class="chart-wrapper" style="height:280px">
+                        <canvas id="secPostureRadar"></canvas>
+                    </div>
+                    <div id="postureDetails" class="sec-posture-details"></div>
+                </div>
+                <div class="panel glass">
+                    <h3 class="panel__title"><i data-lucide="calendar-clock"></i> Quantum Threat Timeline</h3>
+                    <div class="chart-wrapper" style="height:230px">
+                        <canvas id="secTimelineChart"></canvas>
+                    </div>
+                    <div id="timelineMilestones" class="sec-timeline-milestones"></div>
+                </div>
+            </div>
+
+            <!-- Row 3: HNDL Simulator -->
+            <div class="panel glass sec-hndl-panel" style="margin-top:0.5rem">
+                <h3 class="panel__title"><i data-lucide="archive"></i> Harvest Now, Decrypt Later (HNDL) Threat Simulator</h3>
+                <p class="muted" style="margin-bottom:0.75rem">
+                    Adversaries are <strong>harvesting encrypted data today</strong> to decrypt once quantum computers
+                    become powerful enough. Simulate the risk exposure for different data categories.
+                </p>
+                <div class="hndl-controls">
+                    <div class="form-group">
+                        <label>CRQC Arrival Year</label>
+                        <input type="range" id="hndlQuantumYear" class="hndl-slider" min="2028" max="2040" value="2033" />
+                        <span class="hndl-slider-label" id="hndlQuantumYearLabel">2033</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Harvesting Started</label>
+                        <input type="range" id="hndlHarvestYear" class="hndl-slider" min="2018" max="2026" value="2024" />
+                        <span class="hndl-slider-label" id="hndlHarvestYearLabel">2024</span>
+                    </div>
+                    <button class="btn btn--primary btn--sm" id="hndlRunBtn">
+                        <i data-lucide="play"></i> Simulate HNDL Scenario
+                    </button>
+                </div>
+
+                <div id="hndlResults" class="hidden">
+                    <!-- Summary bar -->
+                    <div class="hndl-summary" id="hndlSummary"></div>
+
+                    <div class="card-row card-row--2col" style="margin-top:0.75rem">
+                        <!-- HNDL Risk Chart -->
+                        <div class="chart-wrapper" style="height:260px">
+                            <canvas id="hndlRiskChart"></canvas>
+                        </div>
+                        <!-- Category cards -->
+                        <div class="hndl-categories" id="hndlCategories"></div>
+                    </div>
+
+                    <!-- HNDL Timeline visual -->
+                    <div class="chart-wrapper" style="height:180px;margin-top:0.5rem">
+                        <canvas id="hndlTimelineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ======== CHEMISTRY LAB SECTION ======== -->
+        <section class="section hidden" id="section-chemistry">
+            <h2 class="section-heading">Chemistry Lab</h2>
+
+            <!-- ── Workflow Pipeline Bar ── -->
+            <div class="chem-pipeline glass">
+                <div class="chem-pipeline__step active" data-step="molecule" id="pipeStep-molecule">
+                    <i data-lucide="atom"></i><span>Molecule</span>
+                </div>
+                <div class="chem-pipeline__arrow"><i data-lucide="chevron-right"></i></div>
+                <div class="chem-pipeline__step" data-step="scf" id="pipeStep-scf">
+                    <i data-lucide="trending-down"></i><span>SCF</span>
+                </div>
+                <div class="chem-pipeline__arrow"><i data-lucide="chevron-right"></i></div>
+                <div class="chem-pipeline__step" data-step="active-space" id="pipeStep-active-space">
+                    <i data-lucide="grid-3x3"></i><span>Active Space</span>
+                </div>
+                <div class="chem-pipeline__arrow"><i data-lucide="chevron-right"></i></div>
+                <div class="chem-pipeline__step" data-step="state-prep" id="pipeStep-state-prep">
+                    <i data-lucide="circuit-board"></i><span>State Prep</span>
+                </div>
+                <div class="chem-pipeline__arrow"><i data-lucide="chevron-right"></i></div>
+                <div class="chem-pipeline__step" data-step="qpe" id="pipeStep-qpe">
+                    <i data-lucide="gauge"></i><span>QPE</span>
+                </div>
+                <div class="chem-pipeline__arrow"><i data-lucide="chevron-right"></i></div>
+                <div class="chem-pipeline__step" data-step="casci" id="pipeStep-casci">
+                    <i data-lucide="layers"></i><span>CASCI</span>
+                </div>
+            </div>
+
+            <!-- ── Top Row: Molecule + Controls ── -->
+            <div class="card-row card-row--2col">
+
+                <!-- Molecule Viewer -->
+                <div class="panel glass chem-mol-panel">
+                    <h3 class="panel__title"><i data-lucide="atom"></i> Molecular Structure</h3>
+                    <div class="chem-mol-viewer">
+                        <canvas id="molCanvas" width="360" height="280"></canvas>
+                    </div>
+                    <div class="chem-mol-info" id="molInfo">
+                        <span class="muted">Select a molecule to begin</span>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="panel glass">
+                    <h3 class="panel__title"><i data-lucide="settings-2"></i> Simulation Controls</h3>
+
+                    <div class="form-group">
+                        <label>Select Molecule</label>
+                        <select id="chemMolSelect" class="input glass">
+                            <option value="">— Choose molecule —</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Basis Set</label>
+                            <select id="chemBasis" class="input glass">
+                                <option>STO-3G</option>
+                                <option>cc-pVDZ</option>
+                                <option>cc-pVTZ</option>
+                                <option>6-31G*</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>QPE Precision (bits)</label>
+                            <input type="number" id="chemQPEBits" class="input glass" value="8" min="3" max="14" />
+                        </div>
+                    </div>
+
+                    <div class="chem-btn-row">
+                        <button class="btn btn--primary btn--sm" id="chemRunSCF" disabled>
+                            <i data-lucide="play"></i> Run SCF
+                        </button>
+                        <button class="btn btn--outline btn--sm" id="chemRunAS" disabled>
+                            <i data-lucide="grid-3x3"></i> Active Space
+                        </button>
+                        <button class="btn btn--outline btn--sm" id="chemRunStatePrep" disabled>
+                            <i data-lucide="circuit-board"></i> State Prep
+                        </button>
+                        <button class="btn btn--primary btn--sm" id="chemRunQPE" disabled>
+                            <i data-lucide="gauge"></i> Run QPE
+                        </button>
+                        <button class="btn btn--outline btn--sm" id="chemRunCASCI" disabled>
+                            <i data-lucide="layers"></i> CASCI
+                        </button>
+                    </div>
+                    <button class="btn btn--primary btn--lg" id="chemRunAll" disabled style="margin-top:0.75rem;width:100%">
+                        <i data-lucide="rocket"></i> Run Full Pipeline
+                    </button>
+
+                    <!-- Progress bar -->
+                    <div class="chem-progress hidden" id="chemProgress">
+                        <div class="chem-progress__label" id="chemProgressLabel">Running SCF...</div>
+                        <div class="chem-progress__bar">
+                            <div class="chem-progress__fill" id="chemProgressFill" style="width:0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Results Panels (shown after runs) ── -->
+
+            <!-- SCF Results -->
+            <div class="chem-result-panel hidden" id="chemSCFPanel">
+                <div class="card-row card-row--2col">
+                    <div class="panel glass">
+                        <h3 class="panel__title"><i data-lucide="trending-down"></i> SCF Convergence</h3>
+                        <div class="chart-wrapper" style="height:240px">
+                            <canvas id="scfConvergenceChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel glass">
+                        <h3 class="panel__title"><i data-lucide="bar-chart-3"></i> Orbital Energies</h3>
+                        <div class="chart-wrapper" style="height:240px">
+                            <canvas id="orbitalEnergyChart"></canvas>
+                        </div>
+                        <div class="chem-scf-summary" id="scfSummary"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Space Results -->
+            <div class="chem-result-panel hidden" id="chemASPanel">
+                <div class="card-row card-row--2col">
+                    <div class="panel glass">
+                        <h3 class="panel__title"><i data-lucide="grid-3x3"></i> Natural Orbital Occupations</h3>
+                        <div class="chart-wrapper" style="height:240px">
+                            <canvas id="asOccupationChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel glass">
+                        <h3 class="panel__title"><i data-lucide="flame"></i> Orbital Entanglement Entropy</h3>
+                        <div class="chart-wrapper" style="height:240px">
+                            <canvas id="asEntropyChart"></canvas>
+                        </div>
+                        <div class="chem-as-summary" id="asSummary"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- State Prep Results -->
+            <div class="chem-result-panel hidden" id="chemStatePrepPanel">
+                <div class="panel glass">
+                    <h3 class="panel__title"><i data-lucide="circuit-board"></i> Quantum State Preparation — Ansatz Comparison</h3>
+                    <div class="card-row card-row--2col">
+                        <div class="chart-wrapper" style="height:260px">
+                            <canvas id="statePrepChart"></canvas>
+                        </div>
+                        <div>
+                            <div class="chem-stateprep-table-wrap">
+                                <table class="data-table" id="statePrepTable">
+                                    <thead>
+                                        <tr><th>Method</th><th>Qubits</th><th>Depth</th><th>CNOTs</th><th>Fidelity</th><th>Energy (Ha)</th></tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QPE Results -->
+            <div class="chem-result-panel hidden" id="chemQPEPanel">
+                <div class="card-row card-row--2col">
+                    <div class="panel glass">
+                        <h3 class="panel__title"><i data-lucide="gauge"></i> QPE Phase Histogram</h3>
+                        <div class="chart-wrapper" style="height:260px">
+                            <canvas id="qpeHistogramChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel glass">
+                        <h3 class="panel__title"><i data-lucide="target"></i> QPE Precision Convergence</h3>
+                        <div class="chart-wrapper" style="height:200px">
+                            <canvas id="qpePrecisionChart"></canvas>
+                        </div>
+                        <div class="chem-qpe-summary" id="qpeSummary"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CASCI Results -->
+            <div class="chem-result-panel hidden" id="chemCASCIPanel">
+                <div class="card-row card-row--2col">
+                    <div class="panel glass">
+                        <h3 class="panel__title"><i data-lucide="layers"></i> Energy Spectrum</h3>
+                        <div class="chart-wrapper" style="height:260px">
+                            <canvas id="casciSpectrumChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="panel glass">
+                        <h3 class="panel__title"><i data-lucide="file-text"></i> State Details</h3>
+                        <div class="chem-casci-states" id="casciStates"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======== AI SECTION (placeholder) ======== -->
+        <section class="section hidden" id="section-ai">
+            <h2 class="section-heading">AI Assistant</h2>
+            <div class="panel glass center-content">
+                <i data-lucide="brain" class="icon-hero"></i>
+                <h3>Azure OpenAI Integration</h3>
+                <p class="muted">
+                    Natural-language interaction with quantum chemistry.<br/>
+                    Ask questions, generate circuits, analyze results conversationally.
+                </p>
+                <div class="chip-row" style="margin-top:1rem">
+                    <span class="chip chip--info">GPT-4 / GPT-4o</span>
+                    <span class="chip chip--info">Azure AI Search (RAG)</span>
+                    <span class="chip chip--info">Azure Speech</span>
+                    <span class="chip chip--info">Document Intelligence</span>
+                </div>
+                <p class="muted" style="margin-top:1.5rem"><i data-lucide="construction"></i> Coming soon</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ============================================================
+         FOOTER
+    ============================================================= -->
+    <footer class="site-footer">CREATED BY | CHINMOY C.</footer>
+
+    <!-- ============================================================
+         TOAST NOTIFICATIONS
+    ============================================================= -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- ============================================================
+         SCRIPTS
+    ============================================================= -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
