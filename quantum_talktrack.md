@@ -207,6 +207,25 @@
 | **CASCI** | Complete Active Space Configuration Interaction — computes not just the lowest energy but multiple excited states. Shows the full energy spectrum of the molecule with spin multiplicities and excitation energies. | Getting the complete picture — not just the ground floor, but all the floors of the building. |
 | **Run Full Pipeline** | One-click execution of all 5 steps above in sequence with animated progress bars. | Running the complete engineering analysis end-to-end — one button, full report. |
 
+### Compare & Contrast: The 5 Chemistry Pipeline Steps
+
+> *"Think of these five steps as a relay race — each one hands the baton to the next, progressively refining the answer. Here's how they stack up:"*
+
+| Dimension | **SCF** | **Active Space** | **State Prep** | **QPE** | **CASCI** |
+|---|---|---|---|---|---|
+| **Full Name** | Self-Consistent Field (Hartree-Fock) | Active Space Selection (AVAS) | State Preparation (Ansatz Comparison) | Quantum Phase Estimation | Complete Active Space Configuration Interaction |
+| **In One Sentence** | Rough first estimate of where electrons sit in the molecule | Picks which electrons actually matter and ignores the rest | Chooses the best quantum circuit recipe for the job | Runs the quantum computer to find the molecule's true energy | Calculates the full ladder of energy levels, not just the lowest |
+| **Everyday Analogy** | Taking a quick photo of a building from across the street — you see the shape but miss the details | Hiring only the 5 key engineers instead of flying in all 1,000 employees | Comparing 4 different power tools before drilling the hole | Using the precision tool to drill exactly on the mark | X-raying the entire building — every floor, every room |
+| **Classical or Quantum?** | 100 % classical (runs on a normal laptop) | Classical analysis of the SCF result | Quantum — builds & evaluates 4 different quantum circuits | Quantum — the core quantum algorithm | Can be classical or quantum; dashboard uses classical CI within the quantum-selected active space |
+| **Needs a Quantum Computer?** | No | No | Yes (circuit simulation) | Yes | Not necessarily — but benefits from quantum active-space selection in Step 2 |
+| **Input** | Molecule geometry (atoms & positions) | SCF orbital energies | Active orbitals + electrons | Active space + state preparation circuit | Active space + molecular Hamiltonian |
+| **Key Output** | Orbital energies, HOMO-LUMO gap, Mulliken charges, dipole moment, convergence plot | Active electrons/orbitals count (e.g., 6e, 8o), natural occupations, entanglement entropy radar | Side-by-side table: 4 ansätze ranked by fidelity, circuit depth, CNOT count, energy | Ground-state energy, phase histogram, precision-convergence chart, resource estimate | Multiple excited-state energies, spin multiplicities, excitation energies (eV), CI coefficients |
+| **Accuracy** | Low — ignores electron-electron quantum correlations | N/A (selection step, not an energy calculation) | Medium — compares approximate trial states | High — approaches chemical accuracy (< 1.6 mHa) | High — captures multi-state spectrum within the active space |
+| **Speed** | Very fast (seconds) | Fast (seconds) | Moderate (circuit evaluation) | Moderate to slow (depends on precision qubits) | Fast once active space is small; exponential if active space is large |
+| **When Is It Enough on Its Own?** | Only for very rough screening (e.g., "is this molecule stable?") | Never — it's a preparation step, not a final answer | Never alone — it benchmarks circuits, doesn't produce final energies | Yes — gives the definitive ground-state energy | Yes — when you need excited states, optical properties, or reaction pathways |
+| **Why You Can't Skip It** | Every later step needs the SCF orbitals as a starting point | Without it, the quantum computer would waste qubits on unimportant electrons | Picking the wrong circuit recipe means the quantum computer produces garbage | This is the step where the quantum computer earns its keep — no classical shortcut for large molecules | Only way to see how the molecule absorbs light or transitions between energy states |
+| **CxO Takeaway** | "Fast & cheap first look" | "Focus the expensive quantum resource on what matters" | "Pick the right tool for the job" | "The quantum advantage step — answers that classical can't match" | "The full picture — ground state + excited states in one shot" |
+
 ### Key Terms on This Screen
 
 | Term | Plain-English Meaning |
